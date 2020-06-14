@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+"""
+@Time ： 2020/6/10 上午11:13
+@Auth ： LX
+@File ：spider.py
+@IDE ：PyCharm
+
+"""
+
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 import time
