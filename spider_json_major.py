@@ -4,20 +4,14 @@
 @Auth ： LX
 @File ：spider_json_major.py
 @IDE ：PyCharm
-
-"""
-# -*- coding: utf-8 -*-
-"""
-@Time ： 2020/6/15 下午5:32
-@Auth ： LX
-@File ：spider_json.py
-@IDE ：PyCharm
-
+@DES ：爬取各学校专业的录取分数线
+文科和理科只需要把cookie和authorization 变换了就行
 """
 
 from urllib import request
 import json
-
+import csv
+import time
 #把字符串转换为json，只返回数据部分
 def str2json(str):
     data = json.loads(str)
@@ -42,10 +36,10 @@ def get_page_data(url,headers):
 def spider_universities_info():
     url = 'https://in985.com/api/v1/history/college?OrderIds=&ProvinceIds=&Keyword=&PageIndex=1&PerPageSize=3000&subject=0'
     headers = {
-        'Cookie':'Hm_lvt_7f9735c173e6f4dfe9097fa62a339f96=1592093391,1592094883,1592140773,1592191119; xueyiyunOAuth=eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzNTE4MTUxMDUxOjI1NzIxNTg1MTo0NDE2IiwiQXVkIjoiMiIsIkV4cCI6MTU5MjI1MDUwOCwiSWF0IjoxLCJKdGkiOiIxMTA4OTU4NjgzIn0.nmhkPAN9hEo4rfVDWcscTC_LsTsmPKtd2QNytDJ8INM; canRedir=no; Hm_lpvt_7f9735c173e6f4dfe9097fa62a339f96=1592214562',
+        'Cookie': 'Hm_lvt_7f9735c173e6f4dfe9097fa62a339f96=1592140773,1592191119,1592273437,1592354849; xueyiyunOAuth=eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzODgwNzExMTk0OjExNjk4MjQwNDk6NzE0NDAiLCJBdWQiOiIxIiwiRXhwIjoxNTkyMzk1MDE3LCJJYXQiOjEsIkp0aSI6IjEyMDYwOTI1MTgifQ.bSqOfNYP-HF9FOd5VPe-yAjL1MiBAqTDfkYtNmR6hgg; Hm_lpvt_7f9735c173e6f4dfe9097fa62a339f96=1592359019',
         'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
         'referer':'https://www.in985.com/dataCenter/scoreLine/collegeAdmissions',
-        'authorization':'eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzNTE4MTUxMDUxOjI1NzIxNTg1MTo0NDE2IiwiQXVkIjoiMiIsIkV4cCI6MTU5MjI1MDUwOCwiSWF0IjoxLCJKdGkiOiIxMTA4OTU4NjgzIn0.nmhkPAN9hEo4rfVDWcscTC_LsTsmPKtd2QNytDJ8INM',
+        'authorization': 'eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzODgwNzExMTk0OjExNjk4MjQwNDk6NzE0NDAiLCJBdWQiOiIxIiwiRXhwIjoxNTkyMzk1MDE3LCJJYXQiOjEsIkp0aSI6IjEyMDYwOTI1MTgifQ.bSqOfNYP-HF9FOd5VPe-yAjL1MiBAqTDfkYtNmR6hgg',
     }
     #获得学校的信息，str格式
     universities_json = get_page_data(url,headers)
@@ -60,30 +54,38 @@ def spider_universities_info():
         collegeName = universitiy['collegeName']
         subject = universitiy['subject']
         order = universitiy['order']
+        collegeCode = universitiy['collegeCode']
         arr.append(collegeHistoryId)
         arr.append(province)
         arr.append(collegeName)
         arr.append(subject)
         arr.append(order)
+        arr.append(collegeCode)
         universities_list.append(arr)
     return universities_list
 
 
 def spider_universities_major():
+    f = open('major.csv', 'w', encoding='utf-8', newline='')
+    csv_writer = csv.writer(f)
+    csv_writer.writerow(
+        ["collegeCode","collegeId", "地区", "学校名称", "类别", "批次", "年", "专业名称", "实录分数", "本一实录线差", "本一实录位次", "成都二诊同位实录分", "平均分数", "本一平均线差",
+         "本一平均位次","成都二诊同位平均分"])
     universities_list = spider_universities_info()
     #构造时间列表
-    time_list = ['2012','2013','2014','2015','2016','2017','2018']
+    time_list = ['2018','2017','2016','2015','2014','2013','2012']
+    i = 0
     for university_list in universities_list:
-        for time in time_list:
+        for year in time_list:
             collegeHistoryId = str(university_list[0])
-            url='https://in985.com/api/v1/history/specialty/enrollDiff/'+collegeHistoryId+'?Years='+time+'&PageIndex=1&PerPageSize=100'
-            # url='https://in985.com/api/v1/history/college/enrollDetail/'+collegeHistoryId
-            headers={
-                'Cookie': 'Hm_lvt_7f9735c173e6f4dfe9097fa62a339f96=1592093391,1592094883,1592140773,1592191119; xueyiyunOAuth=eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzNTE4MTUxMDUxOjI1NzIxNTg1MTo0NDE2IiwiQXVkIjoiMiIsIkV4cCI6MTU5MjI1MDUwOCwiSWF0IjoxLCJKdGkiOiIxMTA4OTU4NjgzIn0.nmhkPAN9hEo4rfVDWcscTC_LsTsmPKtd2QNytDJ8INM; canRedir=no; Hm_lpvt_7f9735c173e6f4dfe9097fa62a339f96=1592214562',
+            url = 'https://in985.com/api/v1/history/specialty/enrollDiff/'+collegeHistoryId+'?Years='+year+'&PageIndex=1&PerPageSize=100'
+            headers = {
+                'Cookie': 'Hm_lvt_7f9735c173e6f4dfe9097fa62a339f96=1592140773,1592191119,1592273437,1592354849; xueyiyunOAuth=eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzODgwNzExMTk0OjExNjk4MjQwNDk6NzE0NDAiLCJBdWQiOiIxIiwiRXhwIjoxNTkyMzk1MDE3LCJJYXQiOjEsIkp0aSI6IjEyMDYwOTI1MTgifQ.bSqOfNYP-HF9FOd5VPe-yAjL1MiBAqTDfkYtNmR6hgg; Hm_lpvt_7f9735c173e6f4dfe9097fa62a339f96=1592359019',
                 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
                 'referer': 'https://www.in985.com/dataCenter/scoreLine/collegeDetail',
-                'authorization': 'eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzNTE4MTUxMDUxOjI1NzIxNTg1MTo0NDE2IiwiQXVkIjoiMiIsIkV4cCI6MTU5MjI1MDUwOCwiSWF0IjoxLCJKdGkiOiIxMTA4OTU4NjgzIn0.nmhkPAN9hEo4rfVDWcscTC_LsTsmPKtd2QNytDJ8INM',
+                'authorization': 'eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzODgwNzExMTk0OjExNjk4MjQwNDk6NzE0NDAiLCJBdWQiOiIxIiwiRXhwIjoxNTkyMzk1MDE3LCJJYXQiOjEsIkp0aSI6IjEyMDYwOTI1MTgifQ.bSqOfNYP-HF9FOd5VPe-yAjL1MiBAqTDfkYtNmR6hgg',
             }
+            time.sleep(1)
             universities_json = get_page_data(url,headers)
             majors_json = universities_json['items']
             if len(majors_json) > 0 :
@@ -98,8 +100,9 @@ def spider_universities_major():
                     subject = university_list[3]
                     #本科第一批录取学校
                     order = university_list[4]
+                    collegeCode = university_list[5]
                     #year
-                    year = time
+                    year = year
                     #专业名称
                     speicaltyName = major_json['speicaltyName']
                     #实录分数
@@ -118,6 +121,8 @@ def spider_universities_major():
                     averageGradePosition = major_json['diffs'][0]['averageGradePosition']
                     #成都二诊同位平均分
                     positionAverageGrade = major_json['diffs'][0]['positionAverageGrade']
+                    data_list.append(collegeCode)
+                    data_list.append(collegeHistoryId)
                     data_list.append(province)
                     data_list.append(collegeName)
                     data_list.append(subject)
@@ -132,7 +137,12 @@ def spider_universities_major():
                     data_list.append(averageGradeDiff)
                     data_list.append(averageGradePosition)
                     data_list.append(positionAverageGrade)
-                    print(data_list)
+                    csv_writer.writerow(data_list)
+                    i += 1
+                    print(i)
+                    # print(data_list)
+    f.close()
+    print("done")
 
 if __name__ == '__main__':
     spider_universities_major()
