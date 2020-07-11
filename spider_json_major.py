@@ -36,10 +36,12 @@ def get_page_data(url,headers):
 def spider_universities_info():
     url = 'https://in985.com/api/v1/history/college?OrderIds=&ProvinceIds=&Keyword=&PageIndex=1&PerPageSize=3000&subject=0'
     headers = {
-        'Cookie': 'Hm_lvt_7f9735c173e6f4dfe9097fa62a339f96=1592140773,1592191119,1592273437,1592354849; xueyiyunOAuth=eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzODgwNzExMTk0OjExNjk4MjQwNDk6NzE0NDAiLCJBdWQiOiIxIiwiRXhwIjoxNTkyMzk1MDE3LCJJYXQiOjEsIkp0aSI6IjEyMDYwOTI1MTgifQ.bSqOfNYP-HF9FOd5VPe-yAjL1MiBAqTDfkYtNmR6hgg; Hm_lpvt_7f9735c173e6f4dfe9097fa62a339f96=1592359019',
+        # 'Cookie': 'Hm_lvt_7f9735c173e6f4dfe9097fa62a339f96=1592140773,1592191119,1592273437,1592354849; xueyiyunOAuth=eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzODgwNzExMTk0OjExNjk4MjQwNDk6NzE0NDAiLCJBdWQiOiIxIiwiRXhwIjoxNTkyMzk1MDE3LCJJYXQiOjEsIkp0aSI6IjEyMDYwOTI1MTgifQ.bSqOfNYP-HF9FOd5VPe-yAjL1MiBAqTDfkYtNmR6hgg; Hm_lpvt_7f9735c173e6f4dfe9097fa62a339f96=1592359019',
+        'Cookie': 'Hm_lvt_7f9735c173e6f4dfe9097fa62a339f96=1592273437,1592354849,1592401952,1592470252; xueyiyunOAuth=eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzNTE4MTUxMDUxOjI1NzIxNTg1MTo0NDE2IiwiQXVkIjoiMiIsIkV4cCI6MTU5MjUxNzQ3OCwiSWF0IjoxLCJKdGkiOiIxODQ1MzE5NTMxIn0.I5nEKHotMDPYdiyLmsfBj7gDlIHV5qbtEQGop8RrcAw; Hm_lpvt_7f9735c173e6f4dfe9097fa62a339f96=1592481766',
         'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
         'referer':'https://www.in985.com/dataCenter/scoreLine/collegeAdmissions',
-        'authorization': 'eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzODgwNzExMTk0OjExNjk4MjQwNDk6NzE0NDAiLCJBdWQiOiIxIiwiRXhwIjoxNTkyMzk1MDE3LCJJYXQiOjEsIkp0aSI6IjEyMDYwOTI1MTgifQ.bSqOfNYP-HF9FOd5VPe-yAjL1MiBAqTDfkYtNmR6hgg',
+        #'authorization': 'eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzODgwNzExMTk0OjExNjk4MjQwNDk6NzE0NDAiLCJBdWQiOiIxIiwiRXhwIjoxNTkyMzk1MDE3LCJJYXQiOjEsIkp0aSI6IjEyMDYwOTI1MTgifQ.bSqOfNYP-HF9FOd5VPe-yAjL1MiBAqTDfkYtNmR6hgg',
+        'authorization': 'eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzNTE4MTUxMDUxOjI1NzIxNTg1MTo0NDE2IiwiQXVkIjoiMiIsIkV4cCI6MTU5MjUxNzQ3OCwiSWF0IjoxLCJKdGkiOiIxODQ1MzE5NTMxIn0.I5nEKHotMDPYdiyLmsfBj7gDlIHV5qbtEQGop8RrcAw'
     }
     #获得学校的信息，str格式
     universities_json = get_page_data(url,headers)
@@ -66,26 +68,29 @@ def spider_universities_info():
 
 
 def spider_universities_major():
-    f = open('major.csv', 'w', encoding='utf-8', newline='')
+    f = open('major1_2019.csv', 'w', encoding='utf-8', newline='')
     csv_writer = csv.writer(f)
     csv_writer.writerow(
         ["collegeCode","collegeId", "地区", "学校名称", "类别", "批次", "年", "专业名称", "实录分数", "本一实录线差", "本一实录位次", "成都二诊同位实录分", "平均分数", "本一平均线差",
          "本一平均位次","成都二诊同位平均分"])
     universities_list = spider_universities_info()
     #构造时间列表
-    time_list = ['2018','2017','2016','2015','2014','2013','2012']
+    # time_list = ['2018','2017','2016','2015','2014','2013','2012']
+    # time_list = ['2019']
     i = 0
     for university_list in universities_list:
-        for year in time_list:
+        # for year in time_list:
             collegeHistoryId = str(university_list[0])
-            url = 'https://in985.com/api/v1/history/specialty/enrollDiff/'+collegeHistoryId+'?Years='+year+'&PageIndex=1&PerPageSize=100'
+            url = 'https://in985.com/api/v1/history/specialty/enrollDiff/'+collegeHistoryId+'?Years=2019&PageIndex=1&PerPageSize=100'
             headers = {
-                'Cookie': 'Hm_lvt_7f9735c173e6f4dfe9097fa62a339f96=1592140773,1592191119,1592273437,1592354849; xueyiyunOAuth=eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzODgwNzExMTk0OjExNjk4MjQwNDk6NzE0NDAiLCJBdWQiOiIxIiwiRXhwIjoxNTkyMzk1MDE3LCJJYXQiOjEsIkp0aSI6IjEyMDYwOTI1MTgifQ.bSqOfNYP-HF9FOd5VPe-yAjL1MiBAqTDfkYtNmR6hgg; Hm_lpvt_7f9735c173e6f4dfe9097fa62a339f96=1592359019',
+                #'Cookie': 'Hm_lvt_7f9735c173e6f4dfe9097fa62a339f96=1592140773,1592191119,1592273437,1592354849; xueyiyunOAuth=eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzODgwNzExMTk0OjExNjk4MjQwNDk6NzE0NDAiLCJBdWQiOiIxIiwiRXhwIjoxNTkyMzk1MDE3LCJJYXQiOjEsIkp0aSI6IjEyMDYwOTI1MTgifQ.bSqOfNYP-HF9FOd5VPe-yAjL1MiBAqTDfkYtNmR6hgg; Hm_lpvt_7f9735c173e6f4dfe9097fa62a339f96=1592359019',
+                'Cookie': 'Hm_lvt_7f9735c173e6f4dfe9097fa62a339f96=1592273437,1592354849,1592401952,1592470252; xueyiyunOAuth=eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzNTE4MTUxMDUxOjI1NzIxNTg1MTo0NDE2IiwiQXVkIjoiMiIsIkV4cCI6MTU5MjUxNzQ3OCwiSWF0IjoxLCJKdGkiOiIxODQ1MzE5NTMxIn0.I5nEKHotMDPYdiyLmsfBj7gDlIHV5qbtEQGop8RrcAw; Hm_lpvt_7f9735c173e6f4dfe9097fa62a339f96=1592481766',
                 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
                 'referer': 'https://www.in985.com/dataCenter/scoreLine/collegeDetail',
-                'authorization': 'eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzODgwNzExMTk0OjExNjk4MjQwNDk6NzE0NDAiLCJBdWQiOiIxIiwiRXhwIjoxNTkyMzk1MDE3LCJJYXQiOjEsIkp0aSI6IjEyMDYwOTI1MTgifQ.bSqOfNYP-HF9FOd5VPe-yAjL1MiBAqTDfkYtNmR6hgg',
+                #'authorization': 'eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzODgwNzExMTk0OjExNjk4MjQwNDk6NzE0NDAiLCJBdWQiOiIxIiwiRXhwIjoxNTkyMzk1MDE3LCJJYXQiOjEsIkp0aSI6IjEyMDYwOTI1MTgifQ.bSqOfNYP-HF9FOd5VPe-yAjL1MiBAqTDfkYtNmR6hgg',
+                'authorization': 'eyJBbGciOiJSUzI1NiIsIlR5cCI6IkpXVCJ9.eyJJc3MiOm51bGwsIlN1YiI6IjEzNTE4MTUxMDUxOjI1NzIxNTg1MTo0NDE2IiwiQXVkIjoiMiIsIkV4cCI6MTU5MjUxNzQ3OCwiSWF0IjoxLCJKdGkiOiIxODQ1MzE5NTMxIn0.I5nEKHotMDPYdiyLmsfBj7gDlIHV5qbtEQGop8RrcAw'
             }
-            time.sleep(1)
+            # time.sleep(1)
             universities_json = get_page_data(url,headers)
             majors_json = universities_json['items']
             if len(majors_json) > 0 :
@@ -102,7 +107,7 @@ def spider_universities_major():
                     order = university_list[4]
                     collegeCode = university_list[5]
                     #year
-                    year = year
+                    year = 2019
                     #专业名称
                     speicaltyName = major_json['speicaltyName']
                     #实录分数
